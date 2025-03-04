@@ -1,0 +1,27 @@
+CC := g++
+
+# Optimization flags
+CPP_FLAGS := -Ofast -funroll-loops -finline-functions -march=native -mtune=native
+
+# OpenMP flags
+OMP_FLAGS := -fopenmp ${CPP_FLAGS}
+
+# CUDA flags
+# TODO
+
+# Nearest neighbour interpolation versions
+nearest_v1.0.0 := NearestNeigbour/nearestNeighbour_v1.0.0.cpp
+
+# Bilinear interpolation versions
+# bilinear_v1.0.0 := bilinear_upscaler_v1.0.0.cpp
+
+# Lanczos resampler versions
+# lanczos_v1.0.0 := lanczos_upscaler_v1.0.0.cpp
+
+all: nearest_v1.0.0
+
+nearest_v1.0.0: ${nearest_v1.0.0}
+	${CC} ${CPP_FLAGS} -o nearest_upscaler_v1.0.0.exe ${nearest_v1.0.0}
+
+clean:
+	@rm -f *_upscaler_v*.exe
