@@ -34,3 +34,6 @@
 # Temporary files
 tmp_*
 temp_*
+
+# Virtual Studio Code
+**/.vscode

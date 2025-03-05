@@ -5,11 +5,21 @@
 #include <fstream>
 #include <chrono>
 
-// Definition of mathematical constant Pi
-const float pi = 3.1415926536;
-
 // Predefined clamp(...) function
 int clamp( const int x, const int y );
+
+// Structure for sizes needing width and height
+struct SSize
+{
+    public:
+        int _width  = 0;
+        int _height = 0;
+
+    int total() const
+    {
+        return _width * _height;
+    }
+};
 
 // Class for RGB pixels
 class CPixel
@@ -65,7 +75,7 @@ int clamp( const int x, const int y )
 }
 
 // Helper function to load a picture from a file
-bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, int& pictureWidth, int& pictureHeight )
+bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, SSize& picSize )
 {
     std::ifstream inputFile( fileName, std::ios::in );
     if( ! inputFile.is_open() )
@@ -83,8 +93,18 @@ bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, int&
         return false;
     }
 
-    inputFile >> pictureWidth;
-    inputFile >> pictureHeight;
+    inputFile >> picSize._width;
+    inputFile >> picSize._height;
+    try
+    {
+        picture.reserve( picSize.total() );
+    }
+    catch( std::length_error const& err )
+    {
+        std::cerr << "std::length_error::what(): " << err.what() << '\n';
+        std::cerr << "Unable to reserve enought space for the input picture!" << std::endl;
+        return false;
+    }
 
     inputFile >> tmpStr;
     if( tmpStr != "255" )
@@ -94,7 +114,7 @@ bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, int&
         return false;
     }
     int red, green, blue;
-    for( int idx = 0; idx < pictureWidth*pictureHeight; ++idx )
+    for( int idx = 0; idx < picSize.total(); ++idx )
     {
         inputFile >> red;
         // std::cout << red << std::endl;
@@ -102,8 +122,8 @@ bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, int&
         // std::cout << green << std::endl;
         inputFile >> blue;
         // std::cout << blue << std::endl;
-        // exit(1);
-        picture.push_back( CPixel( red, green, blue ) );
+        
+        picture[idx] = CPixel( red, green, blue );
     }
 
     inputFile.close();
@@ -111,7 +131,7 @@ bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, int&
 }
 
 // Helper function to save a resampled picture to a file
-bool savePicture( const std::string fileName, const std::vector<CPixel> &picture, int& pictureWidth, int& pictureHeight )
+bool savePicture( const std::string fileName, const std::vector<CPixel> &picture, SSize& picSize )
 {
     std::ofstream pictureFile( std::string(fileName), std::ios::out | std::ios::trunc );
     if( ! pictureFile.is_open() )
@@ -121,8 +141,8 @@ bool savePicture( const std::string fileName, const std::vector<CPixel> &picture
     }
 
     std::cout << "Printing a picture..." << std::endl;
-    pictureFile << "P3\n" << pictureWidth << ' ' << pictureHeight << "\n255\n";
-    for( int idx = 0; idx < pictureWidth*pictureHeight; ++idx )
+    pictureFile << "P3\n" << picSize._width << ' ' << picSize._height << "\n255\n";
+    for( int idx = 0; idx < picSize.total(); ++idx )
     {
         pictureFile << picture[idx] << '\n';
     }
@@ -133,6 +153,7 @@ bool savePicture( const std::string fileName, const std::vector<CPixel> &picture
 
 }
 
+// Safely try to parse characters into the integers
 bool toIntSafely( int& toInt, const char* charToInt )
 {
     try
@@ -153,12 +174,13 @@ bool toIntSafely( int& toInt, const char* charToInt )
     return true;
 }
 
-bool argParsing( int argc, char** argv, int& newWidth, int& newHeight, std::string& inputFileName, std::string& outputFileName, bool& multiRun )
+// Helper function to parse intput arguments
+bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFileName, std::string& outputFileName, bool& multiRun )
 {
     if( argc == 6 )
     {
-        if( !toIntSafely( newWidth,  argv[1] ) ) return false;
-        if( !toIntSafely( newHeight, argv[2] ) ) return false;
+        if( !toIntSafely( newPicSize._width,  argv[1] ) ) return false;
+        if( !toIntSafely( newPicSize._height, argv[2] ) ) return false;
 
         inputFileName  = argv[3];
         outputFileName = argv[4];
@@ -166,25 +188,25 @@ bool argParsing( int argc, char** argv, int& newWidth, int& newHeight, std::stri
     }
     else if( argc == 5 )
     {
-        if( !toIntSafely( newWidth,  argv[1] ) ) return false;
-        if( !toIntSafely( newHeight, argv[2] ) ) return false;
+        if( !toIntSafely( newPicSize._width,  argv[1] ) ) return false;
+        if( !toIntSafely( newPicSize._height, argv[2] ) ) return false;
         
         inputFileName  = argv[3];
         outputFileName = argv[4];
     }
     else if( argc == 3 )
     {
-        newWidth       = 124;
-        newHeight      = 124;
-        inputFileName  = argv[1];
-        outputFileName = argv[2];
+        newPicSize._width  = 124;
+        newPicSize._height = 124;
+        inputFileName      = argv[1];
+        outputFileName     = argv[2];
     }
     else if( argc == 2 )
     {
-        newWidth       = 124;
-        newHeight      = 124;
-        inputFileName  = argv[1];
-        outputFileName = "pic_out.ppm";
+        newPicSize._width  = 124;
+        newPicSize._height = 124;
+        inputFileName      = argv[1];
+        outputFileName     = "pic_out.ppm";
     }
     else
     {
@@ -194,39 +216,61 @@ bool argParsing( int argc, char** argv, int& newWidth, int& newHeight, std::stri
     return true;
 }
 
+void nearestNeighbourInterpolation( const std::vector<CPixel>& oldPicture, std::vector<CPixel>& newPicture, const SSize& oldPicSize, const SSize& newPicSize )
+{
+    double widthStepRatio  = double(newPicSize._width)  / double(oldPicSize._width);
+    double heightStepRatio = double(newPicSize._height) / double(oldPicSize._height);
+
+    for( int idx = 0; idx < newPicSize.total(); ++idx )
+    {
+        int fromIdx = int(double(idx % newPicSize._width) / widthStepRatio);
+        fromIdx    += int(double(idx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
+
+        newPicture[idx] = oldPicture[fromIdx];
+    }
+}
+
 int main( int argc, char** argv )
 {
-    int         newWidth, newHeight;
+    SSize       newPicSize;
     std::string inputFileName, outputFileName;
     bool        multiRun = false;
 
-    if( !argParsing( argc, argv, newWidth, newHeight, inputFileName, outputFileName, multiRun ) )
+    if( !argParsing( argc, argv, newPicSize, inputFileName, outputFileName, multiRun ) )
     {
         std::cerr << "Unable to parse the input arguments! Maybe a wrong number of input arguments." << std::endl;
         return 1;
     }
     
-    int oldWidth, oldHeight;
+    SSize               oldPicSize;
     std::vector<CPixel> oldPicture;
     std::vector<CPixel> newPicture;
-    if( !loadPicture( inputFileName, oldPicture, oldWidth, oldHeight ) )
+    if( !loadPicture( inputFileName, oldPicture, oldPicSize ) )
     {
         std::cerr << "Unable to load the picture!" << std::endl;
         return 2;
     }
+    
+    try
+    {
+        newPicture.reserve( newPicSize.total() );
+    }
+    catch( std::length_error const& err )
+    {
+        std::cerr << "std::length_error::what(): " << err.what() << '\n';
+        std::cerr << "Unable to reserve enought space for the new picture!" << std::endl;
+        return 3;
+    }
 
     if( !multiRun )
     {
-        std::cout << "DEBUG: From: " << std::setw( 4 ) << oldWidth << 'x' << oldHeight << '\n';
-        std::cout << "       To:   " << std::setw( 4 ) << newWidth << 'x' << newHeight << std::endl;
+        std::cout << "DEBUG: From: " << std::setw( 4 ) << oldPicSize._width << 'x' << oldPicSize._height << '\n';
+        std::cout << "       To:   " << std::setw( 4 ) << newPicSize._width << 'x' << newPicSize._height << std::endl;
     }
 
     auto startTimer = std::chrono::high_resolution_clock::now();
-    
-    // |-------------------------------|
-    // | Upscaling implementation here |
-    // |-------------------------------|
-    newPicture = oldPicture;
+
+    nearestNeighbourInterpolation( oldPicture, newPicture, oldPicSize, newPicSize );
 
     auto endTimer = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds> ( endTimer - startTimer );
@@ -239,7 +283,7 @@ int main( int argc, char** argv )
         std::cout << int(duration.count()) << std::endl;
     }
     
-    if( !multiRun ) savePicture( outputFileName, newPicture, newWidth, newHeight );
+    if( !multiRun ) savePicture( outputFileName, newPicture, newPicSize );
 
     return 0;
 }
