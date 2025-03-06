@@ -131,7 +131,7 @@ bool loadPicture( const std::string fileName, std::vector<CPixel> &picture, SSiz
 }
 
 // Helper function to save a resampled picture to a file
-bool savePicture( const std::string fileName, const std::vector<CPixel> &picture, SSize& picSize )
+bool savePicture( const std::string fileName, const std::vector<CPixel> &picture, const SSize& picSize )
 {
     std::ofstream pictureFile( std::string(fileName), std::ios::out | std::ios::trunc );
     if( ! pictureFile.is_open() )
