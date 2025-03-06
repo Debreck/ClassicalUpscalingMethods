@@ -236,7 +236,7 @@ int main( int argc, char** argv )
         std::cerr << "Unable to load the picture!" << std::endl;
         return 2;
     }
-    
+
     try
     {
         newPicture.reserve( newPicSize.total() );
