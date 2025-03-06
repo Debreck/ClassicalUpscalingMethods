@@ -216,6 +216,7 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
     return true;
 }
 
+// Function for Nearest Neighbour Interpolation in 2D pictures with RGB pixels
 void nearestNeighbourInterpolation( const std::vector<CPixel>& oldPicture, std::vector<CPixel>& newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
     double widthStepRatio  = double(newPicSize._width)  / double(oldPicSize._width);
