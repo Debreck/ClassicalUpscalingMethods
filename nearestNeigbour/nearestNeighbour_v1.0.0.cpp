@@ -54,11 +54,16 @@ class CPixel
         }
 };
 
-inline CPixel operator* ( CPixel pixel, const float num )
+inline CPixel operator* ( const CPixel& pixel, const float num )
 {
     return CPixel( float( pixel.red() ) * num,
                    float( pixel.green() ) * num,
                    float( pixel.blue() ) * num );
+}
+
+inline CPixel operator* ( const float num, const CPixel &pixel)
+{
+    return pixel * num;
 }
 
 inline std::ostream& operator<< ( std::ostream &out, const CPixel &pixel )
@@ -66,7 +71,7 @@ inline std::ostream& operator<< ( std::ostream &out, const CPixel &pixel )
     return out << pixel.red() << ' ' << pixel.green() << ' ' << pixel.blue();
 }
 
-// Helper function for removing/fixing negative indexes in Lanczos interpolation's sum
+// Helper function for clamping -- 0 < x < y
 int clamp( const int x, const int y )
 {
     if( x < 0 ) return 0;
@@ -219,13 +224,13 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
 // Function for Nearest Neighbour Interpolation in 2D pictures with RGB pixels
 void nearestNeighbourInterpolation( const std::vector<CPixel>& oldPicture, std::vector<CPixel>& newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
-    double widthStepRatio  = double(newPicSize._width)  / double(oldPicSize._width);
-    double heightStepRatio = double(newPicSize._height) / double(oldPicSize._height);
+    float widthStepRatio  = float(newPicSize._width)  / float(oldPicSize._width);
+    float heightStepRatio = float(newPicSize._height) / float(oldPicSize._height);
 
     for( int idx = 0; idx < newPicSize.total(); ++idx )
     {
-        int fromIdx = int(double(idx % newPicSize._width) / widthStepRatio);
-        fromIdx    += int(double(idx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
+        int fromIdx = int(float(idx % newPicSize._width) / widthStepRatio);
+        fromIdx    += int(float(idx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
 
         newPicture[idx] = oldPicture[fromIdx];
     }

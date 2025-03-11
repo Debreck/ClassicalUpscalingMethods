@@ -54,11 +54,16 @@ class CPixel
         }
 };
 
-inline CPixel operator* ( CPixel pixel, const float num )
+inline CPixel operator* ( const CPixel &pixel, const float num )
 {
     return CPixel( float( pixel.red() ) * num,
                    float( pixel.green() ) * num,
                    float( pixel.blue() ) * num );
+}
+
+inline CPixel operator* ( const float num, const CPixel &pixel)
+{
+    return pixel * num;
 }
 
 inline std::ostream& operator<< ( std::ostream &out, const CPixel &pixel )
@@ -66,7 +71,7 @@ inline std::ostream& operator<< ( std::ostream &out, const CPixel &pixel )
     return out << pixel.red() << ' ' << pixel.green() << ' ' << pixel.blue();
 }
 
-// Helper function for removing/fixing negative indexes in Lanczos interpolation's sum
+// Helper function for clamping -- 0 < x < y
 int clamp( const int x, const int y )
 {
     if( x < 0 ) return 0;

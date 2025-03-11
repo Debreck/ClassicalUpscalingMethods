@@ -54,11 +54,16 @@ class CPixel
         }
 };
 
-inline CPixel operator* ( CPixel pixel, const float num )
+inline CPixel operator* ( const CPixel& pixel, const float num )
 {
     return CPixel( float( pixel.red() ) * num,
                    float( pixel.green() ) * num,
                    float( pixel.blue() ) * num );
+}
+
+inline CPixel operator* ( const float num, const CPixel &pixel)
+{
+    return pixel * num;
 }
 
 inline std::ostream& operator<< ( std::ostream &out, const CPixel &pixel )
@@ -66,7 +71,7 @@ inline std::ostream& operator<< ( std::ostream &out, const CPixel &pixel )
     return out << pixel.red() << ' ' << pixel.green() << ' ' << pixel.blue();
 }
 
-// Helper function for removing/fixing negative indexes in Lanczos interpolation's sum
+// Helper function for clamping -- 0 < x < y
 int clamp( const int x, const int y )
 {
     if( x < 0 ) return 0;
@@ -219,8 +224,8 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
 // Function for Nearest Neighbour Interpolation in 2D pictures with RGB pixels
 void nearestNeighbourInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ &newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
-    const double widthStepRatio  = double(newPicSize._width)  / double(oldPicSize._width);
-    const double heightStepRatio = double(newPicSize._height) / double(oldPicSize._height);
+    const float widthStepRatio  = float(newPicSize._width)  / float(oldPicSize._width);
+    const float heightStepRatio = float(newPicSize._height) / float(oldPicSize._height);
     const int cacheAlignment     = 64;
     const int picTotalSize       = newPicSize.total();
 
@@ -233,8 +238,8 @@ void nearestNeighbourInterpolation( const CPixel* __restrict__ oldPicture, CPixe
     {
         for( newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
         {
-            int oldPicIdx = int(double(newPicIdx % newPicSize._width) / widthStepRatio);
-            oldPicIdx    += int(double(newPicIdx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
+            int oldPicIdx = int(float(newPicIdx % newPicSize._width) / widthStepRatio);
+            oldPicIdx    += int(float(newPicIdx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
     
             newPicture[newPicIdx] = oldPicture[oldPicIdx];
         }
