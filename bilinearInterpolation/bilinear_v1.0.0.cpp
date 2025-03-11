@@ -329,7 +329,6 @@ int main( int argc, char** argv )
 
     auto startTimer = std::chrono::high_resolution_clock::now();
 
-    // Function for Nearest Neighbour Interpolation in 2D pictures with RGB pixels
     bilinearInterpolation( oldPicture, newPicture, oldPicSize, newPicSize );
 
     auto endTimer = std::chrono::high_resolution_clock::now();
