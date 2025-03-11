@@ -249,8 +249,8 @@ void bilinearInterpolation( const CPixel* oldPicture, CPixel* &newPicture, const
         int newX = idx % newPicSize._width;
         int newY = idx / newPicSize._width;
         
-        float x = ((float(newX) + 0.5) * widthRatio) - 0.5;
-        float y = ((float(newY) + 0.5) * widthRatio) - 0.5;
+        float x = ((float(newX) + 0.5) * widthRatio)  - 0.5;
+        float y = ((float(newY) + 0.5) * heightRatio) - 0.5;
         
         int x1 = x;
         int x2 = std::min( std::ceil( x ), float(oldPicSize._width - 1) );
