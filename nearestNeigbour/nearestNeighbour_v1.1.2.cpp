@@ -238,8 +238,8 @@ void nearestNeighbourInterpolation( const CPixel* __restrict__ oldPicture, CPixe
     {
         for( newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
         {
-            int oldPicIdx = int(float(newPicIdx % newPicSize._width) / widthStepRatio);
-            oldPicIdx    += int(float(newPicIdx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
+            oldPicIdx  = int(float(newPicIdx % newPicSize._width) / widthStepRatio);
+            oldPicIdx += int(float(newPicIdx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
     
             newPicture[newPicIdx] = oldPicture[oldPicIdx];
         }
