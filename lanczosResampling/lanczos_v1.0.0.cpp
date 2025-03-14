@@ -243,8 +243,8 @@ float lanczosKernel( const float x )
 // Lanczos Resampling helper function -- resampling horizontally
 CPixel resamplingH( const float x, const CPixel* samples, const size_t oldWidth, const size_t moveIdx )
 {
-    int sumFrom = std::floor( x ) - a + 1;
-    int sumTo   = std::floor( x ) + a;
+    int sumFrom = int(x) - a + 1;
+    int sumTo   = int(x) + a;
     CPixel sum  = {};
     for( int idx = sumFrom; idx <= sumTo; ++idx )
     {
@@ -258,8 +258,8 @@ CPixel resamplingH( const float x, const CPixel* samples, const size_t oldWidth,
 // Lanczos Resampling helper function -- resampling vertically
 CPixel resamplingV( const float x, const CPixel* samples, const int oldPicHeight, const int oldPicWidth, const size_t moveIdx )
 {
-    int sumFrom = std::floor( x ) - a + 1;
-    int sumTo   = std::floor( x ) + a;
+    int sumFrom = int(x) - a + 1;
+    int sumTo   = int(x) + a;
     CPixel sum  = {};
     for( int idx = sumFrom; idx <= sumTo; ++idx )
     {
