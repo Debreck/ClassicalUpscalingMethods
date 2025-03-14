@@ -241,6 +241,8 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
 // Function for Bilinear Interpolation in 2D pictures with RGB pixels
 void bilinearInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ &newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
+    int idx;
+
     const float widthRatio      = float(oldPicSize._width)  / float(newPicSize._width);
     const float heightRatio     = float(oldPicSize._height) / float(newPicSize._height);
     const float oldPicWidthIdx  = oldPicSize._width  - 1;
@@ -248,24 +250,21 @@ void bilinearInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __res
     const int cacheAlignment    = 64;
     const int picTotalSize      = newPicSize.total();
 
-    float x, y;
-    int idx, xCeil, yCeil, x1, x2, y1, y2, newPicIdx;
-
     #pragma omp parallel for
     for( idx = 0; idx < picTotalSize + cacheAlignment; idx += cacheAlignment )
     {
-        for( newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
+        for( int newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
         {
-            x = ((float(newPicIdx % newPicSize._width) + 0.5) * widthRatio)  - 0.5;
-            y = ((float(newPicIdx / newPicSize._width) + 0.5) * heightRatio) - 0.5;
+            const float x = ((float(newPicIdx % newPicSize._width) + 0.5) * widthRatio)  - 0.5;
+            const float y = ((float(newPicIdx / newPicSize._width) + 0.5) * heightRatio) - 0.5;
             
-            xCeil = std::ceil( x );
-            yCeil = std::ceil( y );
+            const int xCeil = std::ceil( x );
+            const int yCeil = std::ceil( y );
 
-            x1 = x;
-            x2 = xCeil < oldPicWidthIdx ? xCeil : oldPicWidthIdx;
-            y1 = y;
-            y2 = yCeil < oldPicHeightIdx ? yCeil : oldPicHeightIdx;
+            const int x1 = x;
+            const int x2 = xCeil < oldPicWidthIdx ? xCeil : oldPicWidthIdx;
+            const int y1 = y;
+            const int y2 = yCeil < oldPicHeightIdx ? yCeil : oldPicHeightIdx;
 
             if( x1 == x2 && y1 == y2 )
             {

@@ -224,21 +224,19 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
 // Function for Nearest Neighbour Interpolation in 2D pictures with RGB pixels
 void nearestNeighbourInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ &newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
+    int idx;
+
     const float widthStepRatio  = float(newPicSize._width)  / float(oldPicSize._width);
     const float heightStepRatio = float(newPicSize._height) / float(oldPicSize._height);
-    const int cacheAlignment     = 64;
-    const int picTotalSize       = newPicSize.total();
-
-    int idx       = 0;
-    int newPicIdx = 0;
-    int oldPicIdx = 0;
+    const int cacheAlignment    = 64;
+    const int picTotalSize      = newPicSize.total();
 
     #pragma omp parallel for
     for( idx = 0; idx < picTotalSize + cacheAlignment; idx += cacheAlignment )
     {
-        for( newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
+        for( int newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
         {
-            oldPicIdx  = int(float(newPicIdx % newPicSize._width) / widthStepRatio);
+            int oldPicIdx  = int(float(newPicIdx % newPicSize._width) / widthStepRatio);
             oldPicIdx += int(float(newPicIdx / newPicSize._width) / heightStepRatio) * oldPicSize._width;
     
             newPicture[newPicIdx] = oldPicture[oldPicIdx];
