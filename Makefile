@@ -25,12 +25,13 @@ bilinear_v1.1.1 := bilinearInterpolation/bilinear_v1.1.1.cpp
 # Lanczos resampler versions
 lanczos_v1.0.0 := lanczosResampling/lanczos_v1.0.0.cpp
 lanczos_v1.0.1 := lanczosResampling/lanczos_v1.0.1.cpp
+lanczos_v1.1.0 := lanczosResampling/lanczos_v1.1.0.cpp
 
 nearest: nearest_v1.0.0 nearest_v1.0.1 nearest_v1.1.0 nearest_v1.1.1 nearest_v1.1.2 bilinear_v1.0.0
 
 bilinear: bilinear_v1.0.1 bilinear_v1.1.0 bilinear_v1.1.1
 
-lanczos: lanczos_v1.0.0 lanczos_v1.0.1
+lanczos: lanczos_v1.0.0 lanczos_v1.0.1 lanczos_v1.1.0
 
 all: nearest bilinear lanczos
 
@@ -68,6 +69,9 @@ lanczos_v1.0.0: ${lanczos_v1.0.0}
 
 lanczos_v1.0.1: ${lanczos_v1.0.1}
 	${CC} ${CPP_FLAGS} -o lanczos_upscaler_v1.0.1.exe ${lanczos_v1.0.1}
+
+lanczos_v1.1.0: ${lanczos_v1.1.0}
+	${CC} ${OMP_FLAGS} -o lanczos_upscaler_v1.1.0.exe ${lanczos_v1.1.0}
 
 clean:
 	@rm -f *_upscaler_v*.exe
