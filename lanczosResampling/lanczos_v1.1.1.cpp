@@ -299,7 +299,8 @@ void lanczosResampling( const CPixel* __restrict__ oldPicture, CPixel* __restric
 
     for( int idx = 0; idx < biggerDimension; ++idx )
     {
-        kernelPrecalculation( calcKernels, (idx + 0.5) * widthRatio - 0.5 );
+        kernelPrecalculation( calcKernels, (idx + 0.5) * widthRatio  - 0.5 );
+        kernelPrecalculation( calcKernels, (idx + 0.5) * heightRatio - 0.5 );
     }
 
     #pragma omp parallel
@@ -319,7 +320,7 @@ void lanczosResampling( const CPixel* __restrict__ oldPicture, CPixel* __restric
         {
             for( int newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
             {
-                const float x = (float(newPicIdx/newPicSize._width) + 0.5) * widthRatio - 0.5;
+                const float x = (float(newPicIdx/newPicSize._width) + 0.5) * heightRatio - 0.5;
                 newPicture[newPicIdx] = resamplingV( x, interPicture, calcKernels, oldPicSize._height, newPicSize._width, newPicIdx%newPicSize._width );
             }
         }

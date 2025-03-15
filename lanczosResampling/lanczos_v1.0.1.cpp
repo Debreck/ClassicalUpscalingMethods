@@ -294,7 +294,8 @@ void lanczosResampling( const CPixel* oldPicture, CPixel* &newPicture, const SSi
     int biggerDimension = newPicSize._width > newPicSize._height ? newPicSize._width : newPicSize._height;
     for( size_t idx = 0; idx < biggerDimension; ++idx )
     {
-        kernelPrecalculation( calcKernels, (idx + 0.5) * widthRatio - 0.5 );
+        kernelPrecalculation( calcKernels, (idx + 0.5) * widthRatio  - 0.5 );
+        kernelPrecalculation( calcKernels, (idx + 0.5) * heightRatio - 0.5 );
     }
 
     for( size_t idx = 0; idx < newPicSize._width*oldPicSize._height; ++idx )
@@ -305,7 +306,7 @@ void lanczosResampling( const CPixel* oldPicture, CPixel* &newPicture, const SSi
 
     for( size_t idx = 0; idx < newPicSize.total(); ++idx )
     {
-        float x = (float(idx/newPicSize._width) + 0.5) * widthRatio - 0.5;
+        float x = (float(idx/newPicSize._width) + 0.5) * heightRatio - 0.5;
         newPicture[idx] = resamplingV( x, interPicture, calcKernels, oldPicSize._height, newPicSize._width, idx%newPicSize._width );
     }
 
