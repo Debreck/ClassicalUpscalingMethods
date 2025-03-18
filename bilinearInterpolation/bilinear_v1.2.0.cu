@@ -261,7 +261,7 @@ __global__ void bilinearInterpolation( const CPixel* oldPicture, CPixel* newPict
     const float oldPicHeightIdx = oldPicSize->_height - 1;
 
     const int idx = threadIdx.x + (blockIdx.x * blockDim.x);
-    if( idx >= int(newPicSize->_width*newPicSize->_height) ) return;
+    if( idx >= newPicSize->total() ) return;
 
     const float x = ((float(idx % newPicSize->_width) + 0.5) * widthRatio)  - 0.5;
     const float y = ((float(idx / newPicSize->_width) + 0.5) * heightRatio) - 0.5;

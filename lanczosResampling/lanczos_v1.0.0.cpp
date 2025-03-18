@@ -241,14 +241,14 @@ float lanczosKernel( const float x )
 }
 
 // Lanczos Resampling helper function -- resampling horizontally
-CPixel resamplingH( const float x, const CPixel* samples, const size_t oldWidth, const size_t moveIdx )
+CPixel resamplingH( const float x, const CPixel* oldPicture, const size_t oldWidth, const size_t moveIdx )
 {
     int sumFrom = int(x) - a + 1;
     int sumTo   = int(x) + a;
     CPixel sum  = {};
     for( int idx = sumFrom; idx <= sumTo; ++idx )
     {
-        sum += (samples[clamp( idx, oldWidth - 1 ) + moveIdx] * lanczosKernel( x - idx ));
+        sum += (oldPicture[clamp( idx, oldWidth - 1 ) + moveIdx] * lanczosKernel( x - idx ));
     }
 
     sum.clampRGB();
@@ -256,14 +256,14 @@ CPixel resamplingH( const float x, const CPixel* samples, const size_t oldWidth,
 }
 
 // Lanczos Resampling helper function -- resampling vertically
-CPixel resamplingV( const float x, const CPixel* samples, const int oldPicHeight, const int oldPicWidth, const size_t moveIdx )
+CPixel resamplingV( const float x, const CPixel* interPicture, const int oldPicHeight, const int newPicWidth, const size_t moveIdx )
 {
     int sumFrom = int(x) - a + 1;
     int sumTo   = int(x) + a;
     CPixel sum  = {};
     for( int idx = sumFrom; idx <= sumTo; ++idx )
     {
-        sum += (samples[( clamp( idx, oldPicHeight - 1 ) * oldPicWidth ) + moveIdx] * lanczosKernel( x - idx ));
+        sum += (interPicture[( clamp( idx, oldPicHeight - 1 ) * newPicWidth ) + moveIdx] * lanczosKernel( x - idx ));
     }
 
     sum.clampRGB();
