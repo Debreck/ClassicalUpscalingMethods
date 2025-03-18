@@ -239,7 +239,7 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
 }
 
 // Function for Bilinear Interpolation in 2D pictures with RGB pixels
-void bilinearInterpolation( const CPixel* oldPicture, CPixel* &newPicture, const SSize& oldPicSize, const SSize& newPicSize )
+void bilinearInterpolation( const CPixel* oldPicture, CPixel* newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
     float widthRatio  = float(oldPicSize._width)  / float(newPicSize._width);
     float heightRatio = float(oldPicSize._height) / float(newPicSize._height);

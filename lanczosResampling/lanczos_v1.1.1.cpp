@@ -283,7 +283,7 @@ CPixel resamplingV( const float x, const CPixel* samples, const std::map<float,f
 }
 
 // Lanczos Resampling function
-void lanczosResampling( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ &newPicture, const SSize oldPicSize, const SSize newPicSize )
+void lanczosResampling( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ newPicture, const SSize oldPicSize, const SSize newPicSize )
 {
     std::map<float,float> calcKernels;
     int idx;

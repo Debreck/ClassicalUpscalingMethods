@@ -241,7 +241,7 @@ __global__ void nearestNeighbourInterpolation( const CPixel* oldPicture, CPixel*
     const float widthStepRatio  = float(newPicSize->_width)  / float(oldPicSize->_width);
     const float heightStepRatio = float(newPicSize->_height) / float(oldPicSize->_height);
 
-    int idx = threadIdx.x + (blockIdx.x * blockDim.x);
+    const int idx = threadIdx.x + (blockIdx.x * blockDim.x);
     if( idx >= int(newPicSize->_width*newPicSize->_height) ) return;
 
     int fromIdx = int(float(idx % newPicSize->_width) / widthStepRatio);

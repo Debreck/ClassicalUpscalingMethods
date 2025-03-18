@@ -283,7 +283,7 @@ CPixel resamplingV( const float x, const CPixel* samples, const std::map<float,f
 }
 
 // Lanczos Resampling function
-void lanczosResampling( const CPixel* oldPicture, CPixel* &newPicture, const SSize oldPicSize, const SSize newPicSize )
+void lanczosResampling( const CPixel* oldPicture, CPixel* newPicture, const SSize oldPicSize, const SSize newPicSize )
 {
     const float widthRatio  = float(oldPicSize._width)  / float(newPicSize._width);
     const float heightRatio = float(oldPicSize._height) / float(newPicSize._height);

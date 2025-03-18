@@ -222,7 +222,7 @@ bool argParsing( int argc, char** argv, SSize& newPicSize, std::string& inputFil
 }
 
 // Function for Nearest Neighbour Interpolation in 2D pictures with RGB pixels
-void nearestNeighbourInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ &newPicture, const SSize& oldPicSize, const SSize& newPicSize )
+void nearestNeighbourInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __restrict__ newPicture, const SSize& oldPicSize, const SSize& newPicSize )
 {
     int idx;
 
