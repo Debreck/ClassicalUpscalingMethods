@@ -306,7 +306,7 @@ void lanczosResampling( const CPixel* __restrict__ oldPicture, CPixel* __restric
     #pragma omp parallel
     {
         #pragma omp for
-        for( idx = 0; idx < picInterSize + cacheAlignment; idx += cacheAlignment )
+        for( idx = 0; idx < picInterSize + cacheAlignment - 1; idx += cacheAlignment )
         {
             for( int newPicIdx = idx; newPicIdx < (picInterSize > idx+cacheAlignment ? idx+cacheAlignment : picInterSize); ++newPicIdx )
             {
@@ -316,7 +316,7 @@ void lanczosResampling( const CPixel* __restrict__ oldPicture, CPixel* __restric
         }
 
         #pragma omp for
-        for( idx = 0; idx < picTotalSize + cacheAlignment; idx += cacheAlignment )
+        for( idx = 0; idx < picTotalSize + cacheAlignment - 1; idx += cacheAlignment )
         {
             for( int newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
             {

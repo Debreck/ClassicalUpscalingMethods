@@ -251,7 +251,7 @@ void bilinearInterpolation( const CPixel* __restrict__ oldPicture, CPixel* __res
     const int picTotalSize      = newPicSize.total();
 
     #pragma omp parallel for
-    for( idx = 0; idx < picTotalSize + cacheAlignment; idx += cacheAlignment )
+    for( idx = 0; idx < picTotalSize + cacheAlignment - 1; idx += cacheAlignment )
     {
         for( int newPicIdx = idx; newPicIdx < (picTotalSize > idx+cacheAlignment ? idx+cacheAlignment : picTotalSize); ++newPicIdx )
         {
