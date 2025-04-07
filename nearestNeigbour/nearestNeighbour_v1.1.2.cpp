@@ -287,10 +287,10 @@ int main( int argc, char** argv )
     nearestNeighbourInterpolation( oldPicture, newPicture, oldPicSize, newPicSize );
 
     auto endTimer = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds> ( endTimer - startTimer );
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds> ( endTimer - startTimer );
     if( !multiRun )
     {
-        std::cout << "Total render time: " << int(duration.count()) / 60000 << "m " << ( int(duration.count()) / 1000 ) % 60 << "s " << int(duration.count()) % 1000 << "ms" << std::endl;
+        std::cout << "Total render time: " << int(duration.count()) / 1000000 << "s " << ( int(duration.count()) / 1000 ) % 1000 << "ms " << int(duration.count()) % 1000 << "µs" << std::endl;
     }
     else
     {
