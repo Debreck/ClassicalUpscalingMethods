@@ -1,6 +1,9 @@
 # Classical Image Upscaling Methods
 Implementation of 3 classical image upscalers -- Nearest Neigbour, Bilinear Interpolation and Lanczos Resampling.
 
+Disclaimer: This repository was created as part of a master's thesis at CTU FIT -- Comparison and implementation of classical image upscaling methods.
+Licence: MIT type (Free licence)
+
 ## Version list
 ### Nearest Neighbour
 - **v1.0.0**  - Naive sequential implementation
